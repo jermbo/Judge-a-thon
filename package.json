@@ -1,0 +1,16 @@
+{
+  "name": "judge-a-thon",
+  "version": "0.0.1",
+  "author": "Jeremy 'Jermbo' Lawson",
+  "description": "We should have an app for our hackathons for judges.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jermbo/Judge-a-thon.git"
+  },
+  "keywords": [],
+  "license": "MIT"
+}
