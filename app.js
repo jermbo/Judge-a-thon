@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const poll = require("./routes/poll");
 
+require("./config/db");
+
 const app = express();
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -15,6 +17,6 @@ app.use(cors());
 
 app.use("/poll", poll);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));
