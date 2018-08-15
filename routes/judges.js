@@ -53,25 +53,24 @@ router.post("/Vote",(req,res) => {
         Teams.save( (err,updatedTeam) =>{  // Save if anything changed so we can add our new one.
             // Add our own judgement
             Teams.update({_id:TeamId},{$addToSet:{Judgments:Judgment}}).then(() =>{
-              
+                res.json({Success:true});
+                noOfJugments++;
+
+                // Let's see if all the judges have added judgments. If so. Let's order these suckers.
+                if (noOfJugments == Judges.count({})) {
+                    // All judges have placed their judgements
+                    Teams.find().sort({TotalScore:-1}).then((teams) => {
+                        
+                        let counter = 1;
+                        teams.map((t)=> {
+                            t.RankText = PrettyRankText(counter);
+                            counter++;
+                        })
+                    });
+                }
             });
         });
         
-        // Let's see if all the judges have added judgments. If so. Let's order these suckers.
-        if (noOfJugments == Judges.count({})) {
-            // All judges have placed their judgements
-            Teams.find().sort({TotalScore:-1}).then((teams) => {
-                
-                let counter = 1;
-                teams.map((t)=> {
-                    t.RankText = PrettyRankText(counter);
-                    counter++;
-                })
-            });
-        }
-        // if we got here nothing failed.
-        res.json({Success:true});
-
     } catch (ex) {
         res.json({Success:false,Error:ex});
     }
