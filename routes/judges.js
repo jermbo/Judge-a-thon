@@ -23,7 +23,7 @@ router.post("/auth",(req,res) => {
     }
 }); // end of /auth;
 
-router.post("/Questions",(req,res) => {
+router.get("/Questions",(req,res) => {
     Questions.find().then(Questions => {
         res.json(Questions);
     });
@@ -58,7 +58,7 @@ router.post("/Vote",(req,res) => {
         
         // Let's see if all the judges have added judgments. If so. Let's order these suckers.
         if (noOfJugments == Judges.count({})) {
-            // All judges have placed their 
+            // All judges have placed their judgements
             Teams.find().sort({TotalScore:-1}).then((teams) => {
                 
                 let counter = 1;
