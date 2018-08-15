@@ -45,14 +45,16 @@ router.post("/Vote",(req,res) => {
             
             if (team.Judgments) {
                 // We have at least ONE judgement
-                team.Judgments = team.Judgments.filter((j)=> { return j.JudgeId != JudgeId}) // filter out our own Judgment
+                team.Judgments = team.Judgments.filter((j)=> { return j.JudgeId != JudgeId}) // filter out our own Judgment     
                 noOfJugments = team.Judgments.length;
             }
-        });    
-        // Add our own judgement
-        Teams.update({_id:TeamId},{$addToSet:{Judgments:Judgment}}).then(() =>{
-            res.json({Success:true});
-        })
+        });   
+        Teams.save( (err,updatedTeam) =>{  // Save if anything changed so we can add our new one.
+            // Add our own judgement
+            Teams.update({_id:TeamId},{$addToSet:{Judgments:Judgment}}).then(() =>{
+                res.json({Success:true});
+            });
+        });
         
         // Let's see if all the judges have added judgments. If so. Let's order these suckers.
         if (noOfJugments == Judges.count({})) {
