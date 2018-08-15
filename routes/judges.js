@@ -23,8 +23,9 @@ router.post("/auth",(req,res) => {
     }
 }); // end of /auth;
 
-router.get("/Questions",(req,res) => {
-    Questions.find().then(Questions => {
+router.post("/Questions",(req,res) => {
+    let HackathonId = req.body.HackathonId;
+    Questions.find({HackathonId:HackathonId}).then(Questions => {
         res.json(Questions);
     });
 });
