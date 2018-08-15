@@ -52,7 +52,7 @@ router.post("/Vote",(req,res) => {
         Teams.save( (err,updatedTeam) =>{  // Save if anything changed so we can add our new one.
             // Add our own judgement
             Teams.update({_id:TeamId},{$addToSet:{Judgments:Judgment}}).then(() =>{
-                res.json({Success:true});
+              
             });
         });
         
@@ -68,6 +68,13 @@ router.post("/Vote",(req,res) => {
                 })
             });
         }
+        // if we got here nothing failed.
+        res.json({Success:true});
+
+    } catch (ex) {
+        res.json({Success:false,Error:ex});
+    }
+});
 
 
 let PrettyRankText = (num) => {
@@ -89,9 +96,6 @@ let PrettyRankText = (num) => {
 // db.collection('Teams').update({_id:ObjectId('teamidhere')}, {$set:{RankText:'1st',order:1}});,{w:1});   
 
 
-    } catch (ex) {
-        res.json({Success:false,Error:ex});
-    }
-});
+
 
 module.exports = router;
