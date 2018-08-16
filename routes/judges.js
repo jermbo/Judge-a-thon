@@ -1,18 +1,27 @@
 require("dotenv/config");
 const express = require("express");
+const path = require("path");
 const router = express.Router();
 const Judges = require("../models/Judges");
 const Questions = require("../models/Questions");
 const Teams = require("../models/Teams");
 
+router.get("/",(req,res) => {
+    res.sendFile(path.join(__dirname,'../public/judges.html'));
+});
+
 router.post("/auth",(req,res) => {
     let username = req.body.Username;
     let password = req.body.Password;
+    //console.log("username",username);
     if ( (username) && (password) ) {
-        Judges.find({Username:username,Password:password,deleted:{$ne:true}} ).then(Judge => {
-                    if (Judge != undefined) {
+        Judges.find({Username:username,Password:password},(err,Judge) => {
+                    console.dir(Judge)
+                    if (err) { console.err(err);}
+                    if ( (Judge != undefined) && (Judge.length > 0) ) {
                         //login successful
-                        res.json({login:true,id:Judge._id,Name:Judge.Name});
+                       
+                        res.json({login:true,id:Judge[0]._id,Name:Judge[0].Name});
                     } else {
                         //user not found
                         res.json({login:false,error:'Username or password is incorrect'});
@@ -23,19 +32,29 @@ router.post("/auth",(req,res) => {
     }
 }); // end of /auth;
 
-router.post("/Questions",(req,res) => {
+router.post("/questions",(req,res) => {
     let HackathonId = req.body.HackathonId;
-    Questions.find({HackathonId:HackathonId}).then(Questions => {
+    console.log("looking for questions with hackathon: "+HackathonId)
+    Questions.find({HackathonId:HackathonId},(err,Questions) => {
         res.json(Questions);
     });
 });
 
-router.post("/Vote",(req,res) => {
+router.post("/teams",(req,res) => {
+    let HackathonId = req.body.HackathonId;
+    console.log("looking for teams with hackathon: "+HackathonId)
+    Teams.find({HackathonId:HackathonId},(err,Teams) => {
+        res.json(Teams);
+    });
+});
+
+router.post("/vote",(req,res) => {
     let vote = req.body;
     try {
         let JudgeId = vote.JudgeId;
         let TeamId = vote.TeamId;
         let QuestionAnswers = vote.Questions;
+        let NoOfJudges =  Judges.count({});
         let TotalScoreFromThisJudge = 0;
         QuestionAnswers.map((q)=> { TotalScoreFromThisJudge += q.Score;})
         let Notes = vote.Notes
@@ -57,16 +76,36 @@ router.post("/Vote",(req,res) => {
                 noOfJugments++;
 
                 // Let's see if all the judges have added judgments. If so. Let's order these suckers.
-                if (noOfJugments == Judges.count({})) {
-                    // All judges have placed their judgements
-                    Teams.find().sort({TotalScore:-1}).then((teams) => {
+                if (noOfJugments ==NoOfJudges) {
+                    // All judges have placed their judgements for this team.
+
+                    // did all the judges vote on ALL the teams?
+                    // Since I can just count to see if all the other teams have votes we can 
+                    // assume here that if we're here everyone voted for all the teams
+
+                    let HaveAllTeamsBeenJudged = true;
+
+                    Teams.find({HackathonId:HackathonId}).then((teams) => {
+                       let TeamsLeftToJudge = teams.filter(t=> {
+                            return t.Judgments.length != NoOfJudges;
+                        });
+
+                        if (TeamsLeftToJudge == 0) {
+                            // Let's declare a winner
+                            Teams.find({HackathonId:HackathonId}).sort({TotalScore:-1}).then((teams) => {
                         
-                        let counter = 1;
-                        teams.map((t)=> {
-                            t.RankText = PrettyRankText(counter);
-                            counter++;
-                        })
+                                let counter = 1;
+                                teams.map((t)=> {
+                                    t.RankText = PrettyRankText(counter);
+                                    counter++;
+                                })
+                            });
+                        }
+
                     });
+
+
+
                 }
             });
         });

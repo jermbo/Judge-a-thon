@@ -1,0 +1,132 @@
+<html>
+    <body>
+        Simple backend test<br />
+        <br />
+        Login:<br/>
+        Username: <input type=text id=Username value="rick"><br/>
+        Password: <input type=text id=Password value="rick123"><br/>
+        JudgeID: <span id=judgeid></span><br/>
+        <button onclick="login()">Login</button>
+
+        <HR>
+        Choose a Team:
+        <select id=teams></select>
+
+        <HR>
+        Question List<BR/>
+        <button onclick="getQuestions()">Get Questions</button>
+        
+        <HR>
+        Submit Answer<BR/>
+        <div id=questions></div>
+        <input type=text id="notes" placeholder="Your notes go here"><br/>
+        <button onclick="SubmitAnswers()">Submit Answers</button>
+
+    <script>
+    let HackathonId = "5b74e5ab1b8fd597b516b102";
+    let TeamId = "";
+    let JudgeId = "";
+    let QuestionsArray = [];
+    
+    postData('/judges/teams',{HackathonId:HackathonId})
+    .then((teams) => {
+      let TeamSelect = document.getElementById("teams");
+      TeamId = teams[0]._id;
+      console.log("TeamId",TeamId);
+      teams.map(t=> {
+        let option = document.createElement("option");
+        option.value = t._id;
+        option.text = t.Name;
+        TeamSelect.add(option);
+      })
+    });
+
+
+    function login() {
+        let notes = document.getElementById("notes")
+        let Username = document.getElementById('Username').value;
+        let Password = document.getElementById('Password').value;
+        let JudgeID =  document.getElementById('judgeid');
+        let json = {Username:Username,Password:Password};
+        postData('/judges/auth',json)
+        .then((JsonReply)=> {
+            if (JsonReply.error) {
+                alert(JsonReply.error);
+            } else {
+
+            
+            alert("You logged on as JudgeID:"+JsonReply.id)
+            JudgeId = JsonReply.id
+            JudgeID.innerHTML = JsonReply.id;
+            }
+        });
+    }
+
+    function getQuestions() {
+        let questionsDiv = document.getElementById('questions');
+        let json = {HackathonId:HackathonId}
+        postData('/judges/questions',json)
+        .then((Questions)=> {
+
+            let questionHTML = ``;
+            
+            Questions.map(question => {
+                QuestionsArray.push(question._id);
+
+                questionHTML += `
+                <div class="title">${question.Title}</div>
+                <div class="description">${question.Description}</div>
+                <div class="answer"><select id="${question._id}">`;
+
+                for (let i=question.RangeStart; i<=question.RangeEnd;i++)
+                {
+                    questionHTML += `<option value="${i}">${i}</option>`;
+                }
+
+                questionHTML += `</select></div>`;
+            })
+            questionsDiv.innerHTML = questionHTML;
+        });
+    }
+
+    function SubmitAnswers() {
+        let notes = document.getElementById("notes");
+        let Questions = [];
+        QuestionsArray.map(q=> {
+            let score = document.getElementById(q).options[document.getElementById(q).selectedIndex].value;
+            Questions.push({questionId:q, Score:score});
+        });
+        let vote = {JudgeId:JudgeId,TeamId:TeamId,Questions:Questions,Notes:notes.value}        
+
+        postData('/judges/vote',vote)
+        .then((JsonReply) => {
+            alert("Submitted!")
+        });
+        
+
+    }
+
+    // from developer.mozilla.org
+
+function postData(url = ``, data = {}) {
+  // Default options are marked with *
+    return fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, same-origin, *omit
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            // "Content-Type": "application/x-www-form-urlencoded",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    .then(response => response.json()); // parses response to JSON
+}
+    
+    </script>  
+        
+    </body>
+</html>

@@ -27,7 +27,7 @@ const JudgeSchema = new Schema({
 });
 
 // create collection and add schema
-const Judges = mongoose.model("Judges", JudgeSchema);
+const Judges = mongoose.model("Judges", JudgeSchema,"Judges");
 
 module.exports = Judges;
 
