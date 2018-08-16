@@ -43,7 +43,7 @@ router.post("/questions",(req,res) => {
 router.post("/teams",(req,res) => {
     let HackathonId = req.body.HackathonId;
     console.log("looking for teams with hackathon: "+HackathonId)
-    Teams.find({HackathonId:HackathonId},(err,Teams) => {
+    Teams.find({HackathonId:HackathonId}).sort({TotalScore:-1}). then((Teams) => {
         res.json(Teams);
     });
 });
