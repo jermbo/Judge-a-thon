@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="wrapper" style="width: 75%; margin: 0 auto;">
+        <h1>Simple backend test</h1>
+        <section class="login">
+            <p>Login:</p>
+            <div>
+                <label for="UserName">Username:</label>
+                <input type="text" id="Username" value="rick">
+            </div>
+            <div>
+                <label for="Password">Password:</label>
+                <input type="text" id="Password" value="rick123">
+            </div>
+            JudgeID:<span id=judgeid></span><br/>
+            <button onclick="login()">Login</button>
+        </section>
+
+        <hr>
+
+        <section class="team">
+            <h3>Teams</h3>
+            <select id="teams"></select>
+        </section>
+
+        <hr>
+
+        <section class="questions">
+            <h3>Questions</h3>
+            <button onclick="getQuestions()">Get Questions</button>
+        </section>
+
+        <section class="answers">
+            <h3>Submit Answer</h3>
+            <div id="questions"></div>
+            <input type=text id="notes" placeholder="Your notes go here"><br/>
+            <button onclick="SubmitAnswers()">Submit Answers</button>
+        </section>
+
+        <section class="winners">
+            <h3>Show Winners</h3>
+            <button onclick="showwinners()">Show Winners</button>
+            <div id="winners"></div>
+        </section>
+    </div>
+
+    <script>
+        let HackathonId = "5b75abcbfb6fc066d4268f7e";
+        let TeamId = "";
+        let JudgeId = "";
+        let QuestionsArray = [];
+
+        postData('/judges/teams', { HackathonId: HackathonId })
+            .then((teams) => {
+                let TeamSelect = document.getElementById("teams");
+                TeamId = teams[0]._id;
+                console.log("TeamId", TeamId);
+                teams.map(t => {
+                    let option = document.createElement("option");
+                    option.value = t._id;
+                    option.text = t.Name;
+                    TeamSelect.add(option);
+                })
+            });
+
+
+        function login() {
+            let notes = document.getElementById("notes")
+            let Username = document.getElementById('Username').value;
+            let Password = document.getElementById('Password').value;
+            let JudgeID = document.getElementById('judgeid');
+            let json = { Username: Username, Password: Password };
+            postData('/judges/auth', json)
+                .then((JsonReply) => {
+                    if (JsonReply.error) {
+                        alert(JsonReply.error);
+                    } else {
+
+
+                        alert("You logged on as JudgeID:" + JsonReply.id)
+                        JudgeId = JsonReply.id
+                        JudgeID.innerHTML = JsonReply.id;
+                    }
+                });
+        }
+
+        function getQuestions() {
+            let questionsDiv = document.getElementById('questions');
+            let json = { HackathonId: HackathonId }
+            postData('/judges/questions', json)
+                .then((Questions) => {
+
+                    let questionHTML = ``;
+
+                    Questions.map(question => {
+                        QuestionsArray.push(question._id);
+
+                        questionHTML += `
+                <div class="title">${question.Title}</div>
+                <div class="description">${question.Description}</div>
+                <div class="answer"><select id="${question._id}">`;
+
+                        for (let i = question.RangeStart; i <= question.RangeEnd; i++) {
+                            questionHTML += `<option value="${i}">${i}</option>`;
+                        }
+
+                        questionHTML += `</select></div>`;
+                    })
+                    questionsDiv.innerHTML = questionHTML;
+                });
+        }
+
+        function SubmitAnswers() {
+            let notes = document.getElementById("notes");
+            let Questions = [];
+            QuestionsArray.map(q => {
+                let score = document.getElementById(q).options[document.getElementById(q).selectedIndex].value;
+                Questions.push({ questionId: q, Score: score });
+            });
+            let vote = { JudgeId: JudgeId, TeamId: TeamId, Questions: Questions, Notes: notes.value }
+
+            postData('/judges/vote', vote)
+                .then((JsonReply) => {
+                    alert("Submitted!")
+                });
+        }
+
+        function showwinners() {
+            let winners = document.getElementById("winners");
+            let winnersHTML = "";
+            postData('/judges/teams', { HackathonId: HackathonId })
+                .then((teams) => {
+                    teams.map(t => {
+                        winnersHTML += t.Name + " is " + t.RankText + "<BR/>";
+                    })
+                    winners.innerHTML = winnersHTML;
+                });
+        }
+
+        // from developer.mozilla.org
+        function postData(url = ``, data = {}) {
+            // Default options are marked with *
+            return fetch(url, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, same-origin, *omit
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    // "Content-Type": "application/x-www-form-urlencoded",
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+                body: JSON.stringify(data), // body data type must match "Content-Type" header
+            })
+                .then(response => response.json()); // parses response to JSON
+        }
+
+    </script>
+</body>
+
+</html>

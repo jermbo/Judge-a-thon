@@ -3,6 +3,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const poll = require("./routes/poll");
+const judges = require("./routes/judges");
 
 require("./config/db");
 
@@ -16,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 app.use("/poll", poll);
+app.use("/judges", judges);
 
 const port = process.env.PORT || 3000;
-
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));

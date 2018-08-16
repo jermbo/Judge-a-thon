@@ -3,10 +3,14 @@ const mongoose = require("mongoose");
 // map global promises
 mongoose.Promise = global.Promise;
 
+const dbUser = process.env.DB_USER;
+const dbPwd = process.env.DB_PWD;
+const mongoDB = `mongodb://${dbUser}:${dbPwd}@ds221292.mlab.com:21292/judgeathon`;
+
 // connect mongo
 mongoose
     .connect(
-        "mongodb://judger:judger1@ds221292.mlab.com:21292/judgeathon",
+        mongoDB,
         { useNewUrlParser: true }
     )
     .then(() => {

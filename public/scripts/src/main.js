@@ -1,4 +1,5 @@
 const form = document.querySelector("#judgeform");
+const BASE_URL = "http://localhost:4000";
 
 form.addEventListener("submit", e => {
     e.preventDefault();
@@ -6,7 +7,7 @@ form.addEventListener("submit", e => {
 
     const data = { os: choice };
 
-    fetch("http://localhost:4000/poll", {
+    fetch(`${BASE_URL}/poll`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: new Headers({
@@ -18,7 +19,7 @@ form.addEventListener("submit", e => {
         .catch(err => console.error(err));
 });
 
-fetch("http://localhost:4000/poll")
+fetch(`${BASE_URL}/poll`)
     .then(resp => resp.json())
     .then(json => {
         const votes = json.votes;
@@ -56,9 +57,6 @@ function updateCanvas(votes, totalVotes) {
             ]
         });
         chart.render();
-
-        // Enable pusher logging - don't include this in production
-        // Pusher.logToConsole = true;
 
         const pusher = new Pusher("5ea5a4caef026048c196", {
             cluster: "us2",
