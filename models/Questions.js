@@ -24,11 +24,10 @@ const QuestionsSchema = new Schema({
         required: true
     },
     Answers: [String]
-
 });
 
 // create collection and add schema
-const Questions = mongoose.model("Questions", QuestionsSchema,"Questions");
+const Questions = mongoose.model("Questions", QuestionsSchema, "Questions");
 
 module.exports = Questions;
 
