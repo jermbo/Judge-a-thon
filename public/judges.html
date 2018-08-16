@@ -22,6 +22,11 @@
         <input type=text id="notes" placeholder="Your notes go here"><br/>
         <button onclick="SubmitAnswers()">Submit Answers</button>
 
+        <HR/>
+        Show Winners
+        <button onclick="showwinners()">Show Winners</button>
+        <div id="winners"></div>
+
     <script>
     let HackathonId = "5b74e5ab1b8fd597b516b102";
     let TeamId = "";
@@ -105,6 +110,19 @@
         
 
     }
+
+    function showwinners() {
+        let winners = document.getElementById("winners");
+        let winnersHTML = "";
+        postData('/judges/teams',{HackathonId:HackathonId})
+        .then((teams) => {
+            teams.map(t=> {
+                winnersHTML += t.Name + " is " + t.RankText;
+            })
+            winners.innerHTML = winnersHTML;
+        });
+    }
+
 
     // from developer.mozilla.org
 
