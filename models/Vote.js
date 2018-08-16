@@ -13,6 +13,6 @@ const VoteSchema = new Schema({
 });
 
 // create collection and add schema
-const Vote = mongoose.model("Vote", VoteSchema);
+const Vote = mongoose.model("Vote", VoteSchema, "Vote");
 
 module.exports = Vote;
