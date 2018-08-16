@@ -29,7 +29,7 @@ const TeamSchema = new Schema({
         type: String,
         required: true
     },
-    Order: {
+    order: {
         type: Number,
         required: true,
         default:-1
@@ -37,7 +37,7 @@ const TeamSchema = new Schema({
 });
 
 // create collection and add schema
-const Teams = mongoose.model("Teams", TeamSchema);
+const Teams = mongoose.model("Teams", TeamSchema,"Teams");
 
 module.exports = Teams;
 

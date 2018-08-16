@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 // connect mongo
 mongoose
     .connect(
-        "mongodb://judger:judger1@ds221292.mlab.com:21292/judgeathon",
+        "mongodb://localhost:27017/judgeathon",
         { useNewUrlParser: true }
     )
     .then(() => {

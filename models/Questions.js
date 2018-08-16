@@ -28,7 +28,7 @@ const QuestionsSchema = new Schema({
 });
 
 // create collection and add schema
-const Questions = mongoose.model("Questions", QuestionsSchema);
+const Questions = mongoose.model("Questions", QuestionsSchema,"Questions");
 
 module.exports = Questions;
 
