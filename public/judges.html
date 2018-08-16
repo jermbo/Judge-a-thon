@@ -117,7 +117,7 @@
         postData('/judges/teams',{HackathonId:HackathonId})
         .then((teams) => {
             teams.map(t=> {
-                winnersHTML += t.Name + " is " + t.RankText;
+                winnersHTML += t.Name + " is " + t.RankText + "<BR/>";
             })
             winners.innerHTML = winnersHTML;
         });
