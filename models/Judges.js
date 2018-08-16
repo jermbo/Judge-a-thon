@@ -23,14 +23,12 @@ const JudgeSchema = new Schema({
         type: String,
         required: true
     }
-
 });
 
 // create collection and add schema
-const Judges = mongoose.model("Judges", JudgeSchema,"Judges");
+const Judges = mongoose.model("Judges", JudgeSchema, "Judges");
 
 module.exports = Judges;
 
-
 // Judges - hackathonid, Name, login, password?
-//  db.collection('Judges').insertOne({HackathonID:11111,Name: 'Rick',Description: 'IBM Guy',Username:'rick',Password:'rick123'}) 
+//  db.collection('Judges').insertOne({HackathonID:11111,Name: 'Rick',Description: 'IBM Guy',Username:'rick',Password:'rick123'})
