@@ -1,5 +1,5 @@
 const form = document.querySelector("#judgeform");
-const BASE_URL = "http://localhost:4000";
+const BASE_URL = "http://localhost:4000"; // start with npm run dev to run browserlync
 
 form.addEventListener("submit", e => {
     e.preventDefault();
