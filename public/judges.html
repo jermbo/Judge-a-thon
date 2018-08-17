@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Judge Portal</title>
 </head>
 
 <body>
     <div class="wrapper" style="width: 75%; margin: 0 auto;">
-        <h1>Simple backend test</h1>
-        <section class="login">
+        <h1>Hackathon Judges Portal</h1>
+        <section class="login" id="login">
             <p>Login:</p>
             <div>
                 <label for="UserName">Username:</label>
@@ -24,37 +24,38 @@
             JudgeID:<span id=judgeid></span><br/>
             <button onclick="login()">Login</button>
         </section>
+        <div id="mainApp" style="display:none;">
+            <hr>
 
-        <hr>
+            <section class="team">
+                <h3>Teams</h3>
+                <select id="teams"></select>
+            </section>
 
-        <section class="team">
-            <h3>Teams</h3>
-            <select id="teams"></select>
-        </section>
+            <hr>
 
-        <hr>
+            <section class="questions">
+                <h3>Questions</h3>
+                <button onclick="getQuestions()">Get Questions</button>
+            </section>
 
-        <section class="questions">
-            <h3>Questions</h3>
-            <button onclick="getQuestions()">Get Questions</button>
-        </section>
+            <section class="answers">
+                <h3>Submit Answer</h3>
+                <div id="questions"></div>
+                <input type=text id="notes" placeholder="Your notes go here"><br/>
+                <button onclick="SubmitAnswers()">Submit Answers</button>
+            </section>
 
-        <section class="answers">
-            <h3>Submit Answer</h3>
-            <div id="questions"></div>
-            <input type=text id="notes" placeholder="Your notes go here"><br/>
-            <button onclick="SubmitAnswers()">Submit Answers</button>
-        </section>
-
-        <section class="winners">
-            <h3>Show Winners</h3>
-            <button onclick="showwinners()">Show Winners</button>
-            <div id="winners"></div>
-        </section>
+            <section class="winners">
+                <h3>Show Winners</h3>
+                <button onclick="showwinners()">Show Winners</button>
+                <div id="winners"></div>
+            </section>
+        </div>
     </div>
 
     <script>
-        let HackathonId = "5b75abcbfb6fc066d4268f7e";
+        let HackathonId = "";
         let TeamId = "";
         let JudgeId = "";
         let QuestionsArray = [];
@@ -84,11 +85,11 @@
                     if (JsonReply.error) {
                         alert(JsonReply.error);
                     } else {
-
-
-                        alert("You logged on as JudgeID:" + JsonReply.id)
                         JudgeId = JsonReply.id
-                        JudgeID.innerHTML = JsonReply.id;
+                        // JudgeID.innerHTML = JsonReply.id;
+                        HackathonId = JsonReply.HackathonId;
+                        document.getElementById('login').style.display= "none";
+                        document.getElementById('login').style.display= "mainApp";
                     }
                 });
         }

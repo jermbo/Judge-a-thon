@@ -28,7 +28,8 @@ router.post("/auth", (req, res) => {
             res.json({
                 login: true,
                 id: Judge[0]._id,
-                Name: Judge[0].Name
+                Name: Judge[0].Name,
+                HackathonId: Judge[0].HackathonId;
             });
         } else {
             //user not found
