@@ -5,22 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<<<<<<< HEAD
     <title>Judge Portal</title>
-=======
-    <title>Document</title>
->>>>>>> 3055305d53fdab0f734f5d641e1aa3e2e85ac9ef
 </head>
 
 <body>
     <div class="wrapper" style="width: 75%; margin: 0 auto;">
-<<<<<<< HEAD
         <h1>Hackathon Judges Portal</h1>
         <section class="login" id="login">
-=======
-        <h1>Simple backend test</h1>
-        <section class="login">
->>>>>>> 3055305d53fdab0f734f5d641e1aa3e2e85ac9ef
             <p>Login:</p>
             <div>
                 <label for="UserName">Username:</label>
@@ -33,7 +24,6 @@
             JudgeID:<span id=judgeid></span><br/>
             <button onclick="login()">Login</button>
         </section>
-<<<<<<< HEAD
         <div id="mainApp" style="display:none;">
             <hr>
 
@@ -66,39 +56,6 @@
 
     <script>
         let HackathonId = "";
-=======
-
-        <hr>
-
-        <section class="team">
-            <h3>Teams</h3>
-            <select id="teams"></select>
-        </section>
-
-        <hr>
-
-        <section class="questions">
-            <h3>Questions</h3>
-            <button onclick="getQuestions()">Get Questions</button>
-        </section>
-
-        <section class="answers">
-            <h3>Submit Answer</h3>
-            <div id="questions"></div>
-            <input type=text id="notes" placeholder="Your notes go here"><br/>
-            <button onclick="SubmitAnswers()">Submit Answers</button>
-        </section>
-
-        <section class="winners">
-            <h3>Show Winners</h3>
-            <button onclick="showwinners()">Show Winners</button>
-            <div id="winners"></div>
-        </section>
-    </div>
-
-    <script>
-        let HackathonId = "5b75abcbfb6fc066d4268f7e";
->>>>>>> 3055305d53fdab0f734f5d641e1aa3e2e85ac9ef
         let TeamId = "";
         let JudgeId = "";
         let QuestionsArray = [];
@@ -128,19 +85,11 @@
                     if (JsonReply.error) {
                         alert(JsonReply.error);
                     } else {
-<<<<<<< HEAD
                         JudgeId = JsonReply.id
                         // JudgeID.innerHTML = JsonReply.id;
                         HackathonId = JsonReply.HackathonId;
                         document.getElementById('login').style.display= "none";
                         document.getElementById('login').style.display= "mainApp";
-=======
-
-
-                        alert("You logged on as JudgeID:" + JsonReply.id)
-                        JudgeId = JsonReply.id
-                        JudgeID.innerHTML = JsonReply.id;
->>>>>>> 3055305d53fdab0f734f5d641e1aa3e2e85ac9ef
                     }
                 });
         }
