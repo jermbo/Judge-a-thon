@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Judge Portal</title>
+    <style>
+    .title, .answer {display:inline-block;}
+    .title,#notes { width:400px;}
+    </style>
 </head>
 
 <body>
@@ -92,6 +96,7 @@
                     if (JsonReply.error) {
                         alert(JsonReply.error);
                     } else {
+                        console.log("reply:",JsonReply);
                         JudgeId = JsonReply.id
                         // JudgeID.innerHTML = JsonReply.id;
                         HackathonId = JsonReply.HackathonId;
@@ -128,19 +133,20 @@
                         QuestionsArray.push(question._id);
 
                         questionHTML += `
-                <div class="title">${question.Title}</div>
-                <div class="description">${question.Description}</div>
+                <div class="question">
+                <div class="title"><b>${question.Title}</b><BR/>${question.Description}</div>
                 <div class="answer"><select id="${question._id}">`;
 
                         for (let i = question.RangeStart; i <= question.RangeEnd; i++) {
                             questionHTML += `<option value="${i}">${i}</option>`;
                         }
 
-                        questionHTML += `</select></div>`;
+                        questionHTML += `</select></div></div>`;
                     })
                     questionsDiv.innerHTML = questionHTML;
                 });
         }
+        
 
         function SubmitAnswers() {
             if (confirm("Submitting Answer","Yes","No"))
@@ -151,22 +157,27 @@
                 let score = document.getElementById(q).options[document.getElementById(q).selectedIndex].value;
                 Questions.push({ questionId: q, Score: score });
             });
-            let vote = { JudgeId: JudgeId, TeamId: TeamId, Questions: Questions, Notes: notes.value }
+            let vote = { HackathonId:HackathonId, JudgeId: JudgeId, TeamId: TeamId, Questions: Questions, Notes: notes.value }
 
             postData('/judges/vote', vote)
                 .then((JsonReply) => {
                     alert("Submitted!")
+                    console.log("JsonReply.WinnersFound:",JsonReply.WinnersFound);
+                    if (JsonReply.WinnersFound) {
+                        showwinners();
+                    }
                 });
             }
         }
 
         function showwinners() {
+            console.log("Show the WINNERS!")
             let winners = document.getElementById("winners");
             let winnersHTML = "";
             postData('/judges/teams', { HackathonId: HackathonId })
                 .then((teams) => {
                     teams.map(t => {
-                        winnersHTML += t.Name + " is " + t.RankText + "<BR/>";
+                        winnersHTML += t.Name + " is " + t.RankText + " with a score of " + t.TotalScore + "<BR/>";
                     })
                     winners.innerHTML = winnersHTML;
                 });
