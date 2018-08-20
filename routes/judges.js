@@ -25,11 +25,12 @@ router.post("/auth", (req, res) => {
         }
         if (Judge != undefined && Judge.length > 0) {
             //login successful
+            console.dir(Judge);
             res.json({
                 login: true,
                 id: Judge[0]._id,
                 Name: Judge[0].Name,
-                HackathonId: Judge[0].HackathonId;
+                HackathonId: Judge[0].HackathonId,
             });
         } else {
             //user not found
@@ -60,7 +61,9 @@ router.post("/teams", (req, res) => {
 });
 
 router.post("/vote", (req, res) => {
+    console.log("Votes")
     let vote = req.body;
+    console.log("Votes",vote)
     try {
         let JudgeId = vote.JudgeId;
         let TeamId = vote.TeamId;
@@ -96,6 +99,8 @@ router.post("/vote", (req, res) => {
             ).then(() => {
                 res.json({ Success: true });
                 noOfJugments++;
+                console.log("Number of Judgments:",noOfJugments);
+                console.log("Number of Judges:",NoOfJudges);
 
                 // Let's see if all the judges have added judgments. If so. Let's order these suckers.
                 if (noOfJugments == NoOfJudges) {
@@ -111,6 +116,7 @@ router.post("/vote", (req, res) => {
                         let TeamsLeftToJudge = teams.filter(t => {
                             return t.Judgments.length != NoOfJudges;
                         });
+                        console.log("We have these many teams left to be judged by this judge:"+ TeamsLeftToJudge);
 
                         if (TeamsLeftToJudge == 0) {
                             // Let's declare a winner
@@ -129,6 +135,7 @@ router.post("/vote", (req, res) => {
             });
         });
     } catch (ex) {
+        console.error(ex);
         res.json({ Success: false, Error: ex });
     }
 });
