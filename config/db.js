@@ -14,7 +14,7 @@ mongoose
         { useNewUrlParser: true }
     )
     .then(() => {
-        console.log("mongo connected to ");
+        console.log("mongo connected");
     })
     .catch(err => {
         console.error(err);
