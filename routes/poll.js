@@ -11,34 +11,34 @@ const Pusher = require("pusher");
 // const router = express.Router();
 
 const pusher = new Pusher({
-    appId: process.env.PUSHER_APP_ID,
-    key: process.env.PUSHER_KEY,
-    secret: process.env.PUSHER_SECRET,
-    cluster: "us2",
-    encrypted: true
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: "us2",
+  encrypted: true,
 });
 
 router.get("/", (req, res) => {
-    Vote.find().then(votes => res.json({ success: true, votes: votes }));
+  Vote.find().then(votes => res.json({ success: true, votes: votes }));
 });
 
 router.post("/", (req, res) => {
-    const newVote = {
-        os: req.body.os,
-        points: 1
-    };
+  const newVote = {
+    os: req.body.os,
+    points: 1,
+  };
 
-    new Vote(newVote).save().then(vote => {
-        pusher.trigger("judgeathon", "judge", {
-            points: parseInt(vote.points),
-            os: vote.os
-        });
-
-        return res.json({
-            success: true,
-            message: "Thanks for your vote"
-        });
+  new Vote(newVote).save().then(vote => {
+    pusher.trigger("judgeathon", "judge", {
+      points: parseInt(vote.points),
+      os: vote.os,
     });
+
+    return res.json({
+      success: true,
+      message: "Thanks for your vote",
+    });
+  });
 });
 
 module.exports = router;
